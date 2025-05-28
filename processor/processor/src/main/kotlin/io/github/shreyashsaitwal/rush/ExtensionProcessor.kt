@@ -53,12 +53,9 @@ class ExtensionProcessor : AbstractProcessor() {
         val extensions = elements.map { processExtensionElement(it) }
 
         val generator = InfoFilesGenerator(extensions, elementUtils)
-        try {
-            generator.generateComponentsJson()
-            generator.generateBuildInfoJson()
-        } catch (e: Throwable) {
-            messager.printMessage(Kind.ERROR, e.message + "\n" + e.stackTraceToString())
-        }
+
+        generator.generateComponentsJson()
+        generator.generateBuildInfoJson()
 
         return false
     }

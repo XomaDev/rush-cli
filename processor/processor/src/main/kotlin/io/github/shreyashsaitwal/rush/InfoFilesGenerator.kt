@@ -7,6 +7,9 @@ import io.github.shreyashsaitwal.rush.block.Event
 import io.github.shreyashsaitwal.rush.block.Function
 import io.github.shreyashsaitwal.rush.block.Property
 import io.github.shreyashsaitwal.rush.model.RushYaml
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.serializer
 import org.commonmark.ext.autolink.AutolinkExtension
 import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
@@ -214,6 +217,7 @@ class InfoFilesGenerator(private val extensions: List<ExtensionModel>, private v
      * @return The basket.yml file's data
      * @throws IOException If the input can't be read for some reason.
      */
+    @OptIn(InternalSerializationApi::class)
     private fun metadataFile(): RushYaml {
         val rushYml = if (Paths.get(projectRoot, "basket.yml").exists()) {
             Paths.get(projectRoot, "basket.yml").toFile()

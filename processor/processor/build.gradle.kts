@@ -3,12 +3,13 @@ plugins {
     kotlin("jvm")
     kotlin("kapt") version "2.0.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
-version = "3"
+version = "v3"
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }
 
 java {
@@ -21,8 +22,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
     implementation("com.google.auto.service:auto-service:1.1.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
 
