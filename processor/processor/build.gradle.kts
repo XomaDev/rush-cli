@@ -21,6 +21,8 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation("com.google.auto.service:auto-service:1.1.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
 

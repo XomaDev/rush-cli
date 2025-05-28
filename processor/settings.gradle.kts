@@ -1,3 +1,5 @@
+rootProject.name = "rush-processor"
+
 pluginManagement {
   plugins {
     kotlin("jvm") version "2.0.21"
@@ -6,4 +8,6 @@ pluginManagement {
 plugins {
   id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
-rootProject.name = "rush-processor"
+
+include(":annotations")
+include(":processor")
