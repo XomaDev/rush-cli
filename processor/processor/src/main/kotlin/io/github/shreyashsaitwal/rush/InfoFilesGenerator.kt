@@ -8,17 +8,15 @@ import io.github.shreyashsaitwal.rush.block.Function
 import io.github.shreyashsaitwal.rush.block.Property
 import io.github.shreyashsaitwal.rush.model.RushYaml
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.serializer
 import org.commonmark.ext.autolink.AutolinkExtension
 import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
-import org.w3c.dom.*
-import org.xml.sax.SAXException
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.w3c.dom.*
+import org.xml.sax.SAXException
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.file.Paths
@@ -26,11 +24,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 import javax.lang.model.util.Elements
-import javax.lang.model.element.Element as JavaElement
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
+import javax.lang.model.element.Element as JavaElement
 
 data class ExtensionModel(
     val element: JavaElement,
@@ -41,8 +39,7 @@ data class ExtensionModel(
     val designerProperties: List<DesignerProperty>,
 )
 
-class InfoFilesGenerator(private val extensions: List<ExtensionModel>, private val elementUtils: Elements) {
-    private val projectRoot = System.getenv("BASKET_PROJECT_ROOT")
+class InfoFilesGenerator(private val projectRoot: String, private val extensions: List<ExtensionModel>, private val elementUtils: Elements) {
     private val rawBuildDir = Paths.get(projectRoot, ".basket", "build", "raw").apply {
         if (!this.exists()) this.createDirectory()
     }

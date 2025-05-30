@@ -15,7 +15,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
-import javax.tools.Diagnostic.Kind
 import com.google.appinventor.components.annotations.DesignerProperty as DesignerPropertyAnnotation
 
 @AutoService(Processor::class)
@@ -35,12 +34,14 @@ class ExtensionProcessor : AbstractProcessor() {
 
     private lateinit var messager: Messager
     private lateinit var elementUtils: Elements
+    private lateinit var basketPath: String
 
     @Synchronized
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         messager = processingEnv.messager
         elementUtils = processingEnv.elementUtils
+        basketPath = processingEnv.options["basketPath"] ?: throw RuntimeException("Basket Path Not Found!")
     }
 
     override fun process(annotations: Set<TypeElement?>, roundEnv: RoundEnvironment): Boolean {
@@ -52,7 +53,7 @@ class ExtensionProcessor : AbstractProcessor() {
         val elements = roundEnv.getElementsAnnotatedWith(Extension::class.java)
         val extensions = elements.map { processExtensionElement(it) }
 
-        val generator = InfoFilesGenerator(extensions, elementUtils)
+        val generator = InfoFilesGenerator(basketPath, extensions, elementUtils)
 
         generator.generateComponentsJson()
         generator.generateBuildInfoJson()
