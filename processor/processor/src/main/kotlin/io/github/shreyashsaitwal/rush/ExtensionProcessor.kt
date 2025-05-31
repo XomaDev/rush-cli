@@ -55,6 +55,7 @@ class ExtensionProcessor : AbstractProcessor() {
 
         val generator = InfoFilesGenerator(basketPath, extensions, elementUtils)
 
+        generator.generateExtensionProperty()
         generator.generateComponentsJson()
         generator.generateBuildInfoJson()
 

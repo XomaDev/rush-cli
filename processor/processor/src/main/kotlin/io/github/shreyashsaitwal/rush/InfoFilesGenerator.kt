@@ -26,7 +26,7 @@ import java.util.regex.Pattern
 import javax.lang.model.util.Elements
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
-import kotlin.io.path.createDirectory
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import javax.lang.model.element.Element as JavaElement
 
@@ -41,7 +41,15 @@ data class ExtensionModel(
 
 class InfoFilesGenerator(private val projectRoot: String, private val extensions: List<ExtensionModel>, private val elementUtils: Elements) {
     private val rawBuildDir = Paths.get(projectRoot, ".basket", "build", "raw").apply {
-        if (!this.exists()) this.createDirectory()
+        if (!this.exists()) this.createDirectories()
+    }
+
+    /**
+     * Generates extension.properties
+     */
+    fun generateExtensionProperty() {
+        val componentsJsonFile = Paths.get(rawBuildDir.toString(), "extension.properties").toFile()
+        componentsJsonFile.writeText("type=external\nbasket-version=3")
     }
 
     /**
@@ -78,8 +86,8 @@ class InfoFilesGenerator(private val projectRoot: String, private val extensions
                 .put("licenseName", yaml.license)
                 .put("versionName", yaml.version)
                 // Choosing version at random because it has no effect whatsoever.
-                .put("version", (0..999).random().toString())
-                .put("androidMinSdk", yaml.minSdk.coerceAtLeast(7))
+                .put("version", "1")
+                .put("androidMinSdk", yaml.minSdk.coerceAtLeast(7).toString())
 
             val urlPattern = Pattern.compile(
                 """https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_+.~#?&//=]*)"""
@@ -89,11 +97,15 @@ class InfoFilesGenerator(private val projectRoot: String, private val extensions
                 extJsonObj.put("iconName", icon)
             } else {
                 val origIcon = Paths.get(projectRoot, "assets", icon).toFile()
-                Paths.get(rawBuildDir.toString(), "aiwebres", icon).toFile().apply {
-                    if (this.exists()) this.delete()
-                    origIcon.copyTo(this)
+                if (origIcon.exists()) {
+                    Paths.get(rawBuildDir.toString(), "aiwebres", icon).toFile().apply {
+                        if (this.exists()) this.delete()
+                        origIcon.copyTo(this)
+                    }
+                    extJsonObj.put("iconName", "aiwebres/$icon")
+                } else {
+                    extJsonObj.put("iconName", icon)
                 }
-                extJsonObj.put("iconName", "aiwebres/$icon")
             }
 
             val time = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
@@ -129,7 +141,7 @@ class InfoFilesGenerator(private val projectRoot: String, private val extensions
             val extJsonObj = JSONObject()
                 .put("rushVersion", rushVersion)
                 .put("type", ext.fqcn)
-                .put("androidMinSdk", listOf(yaml.minSdk.coerceAtLeast(7)))
+                .put("androidMinSdk", listOf(yaml.minSdk.coerceAtLeast(7).toString()))
 
             // Put assets
             val assets = yaml.assets.map { it.trim() }
@@ -195,9 +207,18 @@ class InfoFilesGenerator(private val projectRoot: String, private val extensions
                 // The reason why this works is that AI compiler doesn't perform any checks on these
                 // manifest arrays in the build info file, and just adds them to the final manifest file.
                 it
-                    .put("activities", appElements)
-                    .put("permissions", permissions)
+                    .put("contentProviders", JSONArray())
+                    .put("metadata", JSONArray())
+                    .put("broadcastReceivers", JSONArray())
+                    .put("broadcastReceiver", JSONArray())
+                    .put("libraries", JSONArray())
+                    .put("services", JSONArray())
+                    .put("activityMetadata", JSONArray())
                     .put("queries", queries)
+                    .put("assets", JSONArray())
+                    .put("native", JSONArray())
+                    .put("permissions", JSONArray())
+                    .put("activities", appElements)
             }
         }
 
